@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transactions.Api", "src\Transactions.Api\Transactions.Api.csproj", "{0930C81C-F14E-424B-AA49-608C8E20620E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementos de la solución", "Elementos de la solución", "{D107F4C8-89CC-BEA8-D3D7-CA6B7733353D}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yaml = docker-compose.yaml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Antifraud.Worker", "src\Antifraud.Worker\Antifraud.Worker.csproj", "{D145199C-8B7A-43C4-8AA1-FEDB87C9964A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{7ED2D4A4-EC4F-41F2-B584-283AD0D8134E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Antifraud.Worker.Tests", "tests\Antifraud.Worker.Tests\Antifraud.Worker.Tests.csproj", "{5C62C3B5-39D6-44E9-94CA-7607CA7E601D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0930C81C-F14E-424B-AA49-608C8E20620E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0930C81C-F14E-424B-AA49-608C8E20620E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0930C81C-F14E-424B-AA49-608C8E20620E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0930C81C-F14E-424B-AA49-608C8E20620E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D145199C-8B7A-43C4-8AA1-FEDB87C9964A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D145199C-8B7A-43C4-8AA1-FEDB87C9964A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D145199C-8B7A-43C4-8AA1-FEDB87C9964A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D145199C-8B7A-43C4-8AA1-FEDB87C9964A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C62C3B5-39D6-44E9-94CA-7607CA7E601D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C62C3B5-39D6-44E9-94CA-7607CA7E601D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C62C3B5-39D6-44E9-94CA-7607CA7E601D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C62C3B5-39D6-44E9-94CA-7607CA7E601D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0930C81C-F14E-424B-AA49-608C8E20620E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{D145199C-8B7A-43C4-8AA1-FEDB87C9964A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{5C62C3B5-39D6-44E9-94CA-7607CA7E601D} = {7ED2D4A4-EC4F-41F2-B584-283AD0D8134E}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6C469FDA-CA1E-4BE2-901F-7417A7201CF7}
+	EndGlobalSection
+EndGlobal
