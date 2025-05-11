@@ -1,53 +1,64 @@
 # 💳 Transactions & Antifraud Microservice Challenge
 
-Este repositorio contiene una solución compuesta por dos proyectos .NET 8 que implementan una arquitectura orientada a microservicios:
+Este repositorio contiene una solución compuesta por dos microservicios desarrollados en .NET 8 organizados en capas:
 
-* **Transactions.Api**: expone endpoints para registrar, consultar y actualizar transacciones.
-* **Antifraud.Worker**: escucha eventos Kafka y aplica lógica antifraude de manera desacoplada.
+- **Transactions**: API RESTful para registrar, consultar y actualizar transacciones bancarias.
+- **Antifraud**: Worker que escucha eventos desde Kafka y aplica lógica antifraude de forma desacoplada.
 
 ## 🧱 Estructura del repositorio
 
 ```
 src/
-├── Transactions.Api/        # API REST para registrar y consultar transacciones
-├── Antifraud.Worker/        # Servicio de fondo que detecta fraudes
-└── docker-compose.yml       # Orquesta base de datos, Kafka, API y Worker
+├── Transactions/
+│   ├── Transactions.Api/             # Capa de presentación
+│   ├── Transactions.Application/     # Casos de uso y puertos
+│   ├── Transactions.Domain/          # Entidades y lógica de negocio
+│   └── Transactions.Infrastructure/  # EF Core, Kafka producer, repositorios
+│
+├── Antifraud/
+│   ├── Antifraud.Worker/             # Worker .NET
+│   ├── Antifraud.Application/        # Lógica antifraude y servicios
+│   ├── Antifraud.Domain/             # Entidades y mensajes
+│   └── Antifraud.Infrastructure/     # Persistencia y adaptadores Kafka
+│
+└── docker-compose.yml                # Orquesta todos los servicios
 ```
 
 ## 🚀 Cómo ejecutar el proyecto
 
-### Prerrequisitos
+### Requisitos
 
-* [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-* [Docker](https://www.docker.com/products/docker-desktop)
+- [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop)
 
-### Ejecución local sin Docker
+### Opción 1: Solo levantar servicios externos
 
 ```bash
-# Ejecutar base de datos y Kafka desde Docker
-docker-compose up postgres kafka zookeeper
+docker compose up postgres kafka zookeeper
+```
+Luego en dos terminales diferentes:
 
-# En terminal 1
-cd src/Transactions.Api
+```bash
+# Terminal 1
+cd src/Transactions/Transactions.Api
 dotnet run
 
-# En terminal 2
-cd src/Antifraud.Worker
+# Terminal 2
+cd src/Antifraud/Antifraud.Worker
 dotnet run
 ```
 
-### Ejecución con Docker Compose
+### Opción 2: Ejecutar todo con Docker Compose
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 Esto levanta:
-
-* PostgreSQL en `localhost:5432`
-* Kafka en `localhost:9092`
-* Transactions API en `http://localhost:5243`
-* Antifraud Worker corriendo en background
+- PostgreSQL en `localhost:5432`
+- Kafka en `localhost:9092`
+- Transactions API en `http://localhost:5243`
+- Antifraud Worker en background
 
 ## 🧪 Endpoints principales
 
@@ -84,38 +95,41 @@ Content-Type: application/json
 
 ## 🔐 Lógica antifraude
 
-El servicio `Antifraud.Worker` escucha transacciones creadas desde Kafka y aplica dos reglas:
+El servicio `Antifraud.Worker` consume eventos desde Kafka y aplica las siguientes reglas:
 
-* Rechaza transacciones mayores a **2000**
-* Rechaza si el **total diario del usuario excede 20000**
-* Si la transacción es aprobada, **registra el acumulado** en una tabla separada `DailyTransactionLimit`
+- ❌ Rechaza transacciones mayores a 2000
+- ❌ Rechaza si el total diario del usuario supera 20000
+- ✅ Si aprueba, actualiza el acumulado diario por usuario
 
-## 🛠 Migraciones y configuración
+## 🛠 Arquitectura
 
-Ambos proyectos aplican automáticamente las migraciones (`.Migrate()`) al iniciar.
+Se sigue una estructura hexagonal / DDD:
 
-### Configuración de entornos
+- `Application`: casos de uso, interfaces (puertos)
+- `Infrastructure`: implementaciones (adaptadores), EF Core, Kafka
+- `Domain`: entidades y reglas puras
+- `Api` / `Worker`: entrada principal, endpoints o ejecución
 
-* `appsettings.Development.json`: usado al depurar localmente
-* `appsettings.json`: usado al correr en Docker
+## 📦 Migraciones y configuración
 
-## 📦 Tests
+- Las migraciones de EF Core se aplican automáticamente con `.Migrate()`
+- `Transactions.Api` expone la base de datos principal
+- `Antifraud.Worker` mantiene su propia tabla `DailyTransactionLimit`
 
-En `Antifraud.Worker.Tests` se incluye cobertura de unidad para:
+## ⚙️ Variables de entorno y configuración
 
-* `FraudDetectionService` (casos aprobados, rechazados, límites)
+- Se usan `appsettings.json` (para producción/docker) y `appsettings.Development.json` (para desarrollo local)
+- La URL de `TransactionsApi:BaseUrl` y el `Kafka:BootstrapServers` se resuelven desde configuración
 
-## 🧾 Dependencias
+## 🧪 Tests
 
-* PostgreSQL
-* Apache Kafka + Zookeeper (confluentinc)
-* .NET 8
-* EF Core + Npgsql
+- `Antifraud.Worker.Tests` incluye pruebas unitarias para `FraudDetectionService`
 
-## 📌 Notas
+## 📌 Notas adicionales
 
-* El tópico `transactions-created` se crea automáticamente si no existe
-* El worker se desacopla completamente del API: no accede a su base directamente, sino que mantiene su propia tabla de acumulado
+- El mensaje enviado al topic `transactions-created` es un `TransactionCreatedMessage`
+- El mismo contrato es consumido por `Antifraud.Worker`
+- Se evita pasar entidades al bus o entre capas; se usan DTOs y mensajes explícitos
 
 ---
 

@@ -25,14 +25,14 @@ services:
       - 9092:9092
   antifraud.worker:
     build:
-      context: ./src/Antifraud.Worker
+      context: ./src/Antifraud/Antifraud.Worker
       dockerfile: Dockerfile
     depends_on:
       - postgres
       - kafka
   transactions.api:
     build:
-      context: ./src/Transactions.Api
+      context: ./src/Transactions/Transactions.Api
       dockerfile: Dockerfile
     ports:
       - "5243:8080"
